@@ -3,9 +3,11 @@
 set -e
 
 SOURCE_REPO=$1
-SOURCE_BRANCH=$2
-DESTINATION_REPO=$3
-DESTINATION_BRANCH=$4
+DESTINATION_REPO=$2
+BRANCH_NAME=$(echo $* | cut -d ' ' -f 3-)
+
+echo "$BRANCH_NAME"
+
 
 if ! echo $SOURCE_REPO | grep '.git'
 then
@@ -28,9 +30,17 @@ then
   fi
 fi
 
-echo "SOURCE=$SOURCE_REPO:$SOURCE_BRANCH"
-echo "DESTINATION=$DESTINATION_REPO:$DESTINATION_BRANCH"
 
 git clone "$SOURCE_REPO" --origin source && cd `basename "$SOURCE_REPO" .git`
 git remote add destination "$DESTINATION_REPO"
-git push destination "${SOURCE_BRANCH}:${DESTINATION_BRANCH}" -f
+
+for BRANCH in $BRANCH_NAME
+do
+  echo "SOURCE=$SOURCE_REPO:$BRANCH"
+  echo "DESTINATION=$DESTINATION_REPO:$BRANCH"
+
+  git checkout $BRANCH 
+  git push destination $BRANCH -f
+done
+
+git push destination --tags

@@ -25,23 +25,23 @@ jobs:
       uses: wei/git-sync@v1
       env:
         SOURCE_REPO: ""
-        SOURCE_BRANCH: ""
         DESTINATION_REPO: ""
-        DESTINATION_BRANCH: ""
+        BRANCH_NAME: ""
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       with:
-        args: $SOURCE_REPO $SOURCE_BRANCH $DESTINATION_REPO $DESTINATION_BRANCH
+        args: $SOURCE_REPO $DESTINATION_REPO $BRANCH_NAME
 ```
 `SSH_PRIVATE_KEY` can be omitted if using authenticated HTTPS repo clone urls like `https://username:access_token@github.com/username/repository.git`.
 
 #### Advanced: Sync all branches
 
-To Sync all branches from source to destination, use `SOURCE_BRANCH: "refs/remotes/source/*"` and `DESTINATION_BRANCH: "refs/heads/*"`. But be careful, branches with the same name including `master` will be overwritten.
+To sync multiple branches from source to destination, you can set multiple repo in `BRANCH_NAME`, separated by spaces.
+By default, all tags are synchronized
 
 ### Docker
 ```
 docker run --rm -e "SSH_PRIVATE_KEY=$(cat ~/.ssh/id_rsa)" $(docker build -q .) \
-  $SOURCE_REPO $SOURCE_BRANCH $DESTINATION_REPO $DESTINATION_BRANCH
+  $SOURCE_REPO $DESTINATION_REPO $BRANCH_NAME
 ```
 
 ## Author
